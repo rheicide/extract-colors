@@ -12,7 +12,6 @@ junit.xml
 .cache
 
 # Build
-lib
 dist-doc
 extract-colors
 dist
