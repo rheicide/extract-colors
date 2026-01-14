@@ -77,15 +77,19 @@ export const extractImageData = (
   _image: HTMLImageElement | ImageBitmap,
   _pixels: number,
 ) => {
-  const currentPixels = _image.width * _image.height;
+  const imageWidth =
+    "naturalWidth" in _image ? _image.naturalWidth : _image.width;
+  const imageHeight =
+    "naturalHeight" in _image ? _image.naturalHeight : _image.height;
+  const currentPixels = imageWidth * imageHeight;
   const width =
     currentPixels < _pixels
-      ? _image.width
-      : Math.round(_image.width * Math.sqrt(_pixels / currentPixels));
+      ? imageWidth
+      : Math.round(imageWidth * Math.sqrt(_pixels / currentPixels));
   const height =
     currentPixels < _pixels
-      ? _image.height
-      : Math.round(_image.height * Math.sqrt(_pixels / currentPixels));
+      ? imageHeight
+      : Math.round(imageHeight * Math.sqrt(_pixels / currentPixels));
 
   const canvas = ((width: number, height: number) => {
     if (checkIsWorker()) {
@@ -100,17 +104,7 @@ export const extractImageData = (
   const context = canvas.getContext("2d") as
     | CanvasRenderingContext2D
     | OffscreenCanvasRenderingContext2D;
-  context.drawImage(
-    _image,
-    0,
-    0,
-    _image.width,
-    _image.height,
-    0,
-    0,
-    width,
-    height,
-  );
+  context.drawImage(_image, 0, 0, imageWidth, imageHeight, 0, 0, width, height);
 
   return context.getImageData(0, 0, width, height);
 };
